@@ -1,7 +1,7 @@
 # powerANOVA: Power Analysis for Repeated Measures ANOVA.
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
-`powerANOVA` is an R package intended as a companion to the article "A Tutorial on Using the Paired *t*-Test for Power Calculations in Repeated Measures ANOVA".
+`powerANOVA` is an R package intended as a companion to the article "A Tutorial on Using the Paired *t*-Test for Power Calculations in Repeated Measures ANOVA". Supplementary materials for the article can be found on [osf](https://osf.io/87j5m/).
 
 
 ## 1 Installation
