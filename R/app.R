@@ -591,9 +591,9 @@ server <- function(input, output) {
         parsed <- parse_input_power_eta(input)
 
         if (is_valid(parsed)) {
-            pwr <- power_p_eta_sq(n = parsed$n$value,
-                                  p_eta_sq = parsed$p_eta_sq$value,
-                                  df1 = parsed$df1$value)
+            pwr <- power_petasq(n = parsed$n$value,
+                                p_eta_sq = parsed$p_eta_sq$value,
+                                df1 = parsed$df1$value)
             withMathJax(sprintf("\\(PWR = %f\\)", pwr))
         } else {
             do.call(withMathJax, collect_errors(parsed))

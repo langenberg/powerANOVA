@@ -1,15 +1,16 @@
 Package: powerANOVA
 Type: Package
-Title: Estimating Power for Repeated Measures ANOVA
+Title: Power Analysis for Repeated Measures ANOVA
 Version: 0.1
 Author: Benedikt Langenberg [aut, cre]
 Maintainer: Benedikt Langenberg <benedikt.langenberg@gmail.com>
 Depends:
     R (>= 3.4.0),
     shiny,
-    tidyverse
-Description: This package estimates Power for Repeated Measures ANOVA.
+    tidyverse,
+    effectsize
+Description: Power Analysis for Repeated Measures ANOVA.
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2.9000
