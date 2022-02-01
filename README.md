@@ -17,7 +17,7 @@ devtools::install_github("langenberg/powerANOVA")
 
 ## 2 Usage
 
-First load the package using the following command:
+First, load the package using the following command:
 
 ```
 library(powerANOVA)
