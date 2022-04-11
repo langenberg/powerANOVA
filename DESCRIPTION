@@ -1,7 +1,7 @@
 Package: powerANOVA
 Type: Package
 Title: Power Analysis for Repeated Measures ANOVA
-Version: 0.1
+Version: 0.1.1
 Author: Benedikt Langenberg [aut, cre]
 Maintainer: Benedikt Langenberg <benedikt.langenberg@gmail.com>
 Depends:
