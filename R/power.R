@@ -6,7 +6,8 @@ get_sums_of_squares <- function(
     var = 1,
     cov = 0.5,
     effect,
-    idata
+    idata,
+    ...
 ) {
 
     if (missing(Sigma)) {
@@ -48,13 +49,13 @@ get_sums_of_squares <- function(
 }
 
 #' @export
-power_cohens_d <- function(n = 10, cohens_d) {
+power_cohens_d <- function(n = 10, cohens_d, alpha = 0.05, ...) {
     t <- abs(cohens_d * sqrt(n))
-    pt(qt(0.025, df = n-1), ncp = t, df = n-1) + (1 - pt(qt(0.975, df = n-1), ncp = t, df = n-1))
+    pt(qt(alpha/2, df = n-1), ncp = t, df = n-1) + (1 - pt(qt(1-alpha/2, df = n-1), ncp = t, df = n-1))
 }
 
 #' @export
-power_mu_cov_contrast <- function(n = 10, mu, Sigma, contrast) {
+power_mu_cov_contrast <- function(n = 10, mu, Sigma, contrast, ...) {
     mu <- contrast %*% mu
     Sigma <- contrast %*% Sigma %*% t(contrast)
     power_mu_cov(n = 10, mu = mu, Sigma = Sigma)
@@ -77,7 +78,7 @@ power_mu_cov_uni <- function(n = 10, ...) {
     d_sd <- sqrt(sums[[2]][1,1])
     cohens_d <- d_mean / d_sd
 
-    power_cohens_d(n = n, cohens_d = cohens_d)
+    power_cohens_d(n = n, cohens_d = cohens_d, ...)
 }
 
 #' @keywords internal
@@ -86,15 +87,15 @@ power_mu_cov_multi <- function(n, ...) {
     p_eta_sq <- sum(diag(sums[[1]])) / (sum(diag(sums[[1]])) + sum(diag(sums[[2]])))
     df1 <- ncol(sums[[1]])
 
-    power_petasq(n, p_eta_sq, df1)
+    power_petasq(n, p_eta_sq, df1, ...)
 }
 
 #' @export
-power_petasq <- function(n, p_eta_sq, df1 = 1) {
+power_petasq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
     df2 <- df1 * (n-df1)
     # F_value <- p_eta_sq*df2/(df1 - p_eta_sq*df1)
     ncp <- convert_petasq_f2(p_eta_sq)*df2
-    1 - pf(qf(0.95, df1 = df1, df2 = df2), df1 = df1, df2 = df2, ncp = ncp)
+    1 - pf(qf(1-alpha, df1 = df1, df2 = df2), df1 = df1, df2 = df2, ncp = ncp)
 }
 
 #' @export
@@ -139,7 +140,7 @@ convert_petasq_cohens_d <- function(p_eta_sq, n, population = TRUE) {
 }
 
 #' @export
-power_plot_cohens_d <- function(n = 10, cohens_d) {
+power_plot_cohens_d <- function(n = 10, cohens_d, alpha = 0.05) {
     t <- abs(cohens_d * sqrt(n))
 
     ggplot() +
@@ -161,18 +162,18 @@ power_plot_cohens_d <- function(n = 10, cohens_d) {
             geom = "area",
             alpha = 0.2,
             fill = "steelblue",
-            xlim = c(qt(0.975, df = n - 1), qt(0.975, df = n - 1) + 1)
+            xlim = c(qt(1-alpha/2, df = n - 1), qt(1-alpha/2, df = n - 1) + 1)
         ) +
         stat_function(
             fun = function(x) dt(x, n - 1, ncp = t),
             geom = "area",
             alpha = 0.2,
             fill = "steelblue",
-            xlim = c(qt(0.025, df = n - 1) - 1, qt(0.025, df = n - 1))
+            xlim = c(qt(alpha/2, df = n - 1) - 1, qt(alpha/2, df = n - 1))
         ) +
-        geom_vline(xintercept = qt(0.975, df = n - 1)) +
-        geom_vline(xintercept = qt(0.025, df = n - 1)) +
-        xlim(c(qt(0.025, df = n - 1) - 1, qt(0.975, df = n - 1) + 1)) +
+        geom_vline(xintercept = qt(1-alpha/2, df = n - 1)) +
+        geom_vline(xintercept = qt(alpha/2, df = n - 1)) +
+        xlim(c(qt(alpha/2, df = n - 1) - 1, qt(1-alpha/2, df = n - 1) + 1)) +
         ylab("probability density") +
         xlab("t") +
         theme_bw() +
@@ -181,7 +182,7 @@ power_plot_cohens_d <- function(n = 10, cohens_d) {
 }
 
 #' @export
-power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1) {
+power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05) {
     df2 <- df1 * (n - df1)
     ncp <- convert_petasq_f2(p_eta_sq)*df2
 
@@ -217,10 +218,10 @@ power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1) {
             geom = "area",
             alpha = 0.2,
             fill = "steelblue",
-            xlim = c(qf(0.95, df1 = df1, df2 = df2), qf(0.95, df1 = df1, df2 = df2) + 1)
+            xlim = c(qf(1-alpha, df1 = df1, df2 = df2), qf(1-alpha, df1 = df1, df2 = df2) + 1)
         ) +
-        geom_vline(xintercept = qf(0.95, df1 = df1, df2 = df2)) +
-        xlim(c(0, qf(0.95, df1 = df1, df2 = df2) + 1)) +
+        geom_vline(xintercept = qf(1-alpha, df1 = df1, df2 = df2)) +
+        xlim(c(0, qf(1-alpha, df1 = df1, df2 = df2) + 1)) +
         ylab("probability density") +
         xlab("F") +
         theme_bw() +
@@ -229,10 +230,10 @@ power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1) {
 }
 
 #' @export
-power_plot_mu_cov_contrast <- function(n = 10, mu, Sigma, contrast) {
+power_plot_mu_cov_contrast <- function(n = 10, mu, Sigma, contrast, ...) {
     mu <- contrast %*% mu
     Sigma <- contrast %*% Sigma %*% t(contrast)
-    power_plot_mu_cov(n = 10, mu = mu, Sigma = Sigma)
+    power_plot_mu_cov(n = 10, mu = mu, Sigma = Sigma, ...)
 }
 
 #' @export
@@ -246,7 +247,7 @@ power_plot_mu_cov <- function(n = 10, ...) {
         power_plot_cohens_d(n = n, cohens_d = cohens_d)
     } else {
         p_eta_sq <- sum(diag(sums[[1]])) / (sum(diag(sums[[1]])) + sum(diag(sums[[2]])))
-        power_plot_p_eta_sq(n = n, p_eta_sq = p_eta_sq, df1 = ncol(sums[[1]]))
+        power_plot_p_eta_sq(n = n, p_eta_sq = p_eta_sq, df1 = ncol(sums[[1]]), ...)
     }
 }
 
@@ -256,6 +257,4 @@ power_plot_mu_cov_uni <- function(n = 10, ...) {
     d_mean <- sqrt(sums[[1]][1,1])
     d_sd <- sqrt(sums[[2]][1,1])
     cohens_d <- d_mean / d_sd
-
-
 }

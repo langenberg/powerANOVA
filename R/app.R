@@ -209,8 +209,9 @@ parse_input_power_cohens_d <- function(input) {
 
     n <- parse_int(input$txt_n_cohens_d)
     cohens_d <- parse_dbl(input$txt_cohens_d)
+    alpha <- parse_dbl(input$txt_alpha_cohens_d)
 
-    list(n = n, cohens_d = cohens_d)
+    list(n = n, cohens_d = cohens_d, alpha = alpha)
 }
 
 #' @keywords internal
@@ -218,8 +219,9 @@ parse_input_power_eta <- function(input) {
     n <- parse_int(input$txt_n_eta)
     p_eta_sq <- parse_dbl(input$txt_p_eta_sq)
     df1 <- parse_int(input$txt_df1_eta)
+    alpha <- parse_dbl(input$txt_alpha_eta)
 
-    list(n = n, p_eta_sq = p_eta_sq, df1 = df1)
+    list(n = n, p_eta_sq = p_eta_sq, df1 = df1, alpha = alpha)
 }
 
 #' @keywords internal
@@ -237,7 +239,9 @@ parse_input_power_eq <- function(input) {
 
     cov <- parse_dbl(input$txt_cov_eq, n = 1)
 
-    list(design = design, effect = effect, mu = mu, n = n, var = var, cov = cov)
+    alpha <- parse_dbl(input$txt_alpha_eq)
+
+    list(design = design, effect = effect, mu = mu, n = n, var = var, cov = cov, alpha = alpha)
 }
 
 #' @keywords internal
@@ -253,7 +257,9 @@ parse_input_power_uneq <- function(input) {
 
     Sigma <- parse_dbl_matrix(input$txt_sigma_uneq, dim = nrow(design$idata))
 
-    list(design = design, effect = effect, mu = mu, n = n, Sigma = Sigma)
+    alpha <- parse_dbl(input$txt_alpha_uneq)
+
+    list(design = design, effect = effect, mu = mu, n = n, Sigma = Sigma, alpha = alpha)
 }
 
 # Define UI for application that draws a histogram
@@ -276,6 +282,11 @@ ui <- fluidPage(
                         "txt_cohens_d",
                         label = h3("Cohen's \\(d\\)"),
                         value = "0.5"
+                    ),
+                    textInput(
+                        "txt_alpha_cohens_d",
+                        label = h3("\\(\\alpha\\)"),
+                        value = "0.05"
                     )
                 ),
 
@@ -304,6 +315,11 @@ ui <- fluidPage(
                         "txt_df1_eta",
                         label = h3("\\(df_1\\)"),
                         value = "1"
+                    ),
+                    textInput(
+                        "txt_alpha_eta",
+                        label = h3("\\(\\alpha\\)"),
+                        value = "0.05"
                     )
                 ),
 
@@ -346,7 +362,12 @@ ui <- fluidPage(
                         label = h3("\\(\\sigma_{ij}\\)"),
                         value = "0.5"
                     ),
-                    uiOutput("txt_out_sigma_eq")
+                    uiOutput("txt_out_sigma_eq"),
+                    textInput(
+                        "txt_alpha_eq",
+                        label = h3("\\(\\alpha\\)"),
+                        value = "0.05"
+                    )
                 ),
 
                 # Show a plot of the generated distribution
@@ -385,7 +406,12 @@ ui <- fluidPage(
                         label = h3("\\(\\Sigma\\)"),
                         value = "[[1,0.5,0.5,0.5],[0.5,1,0.5,0.5],[0.5,0.5,1,0.5],[0.5,0.5,0.5,1]]"
                     ),
-                    uiOutput("txt_out_sigma_uneq")
+                    uiOutput("txt_out_sigma_uneq"),
+                    textInput(
+                        "txt_alpha_uneq",
+                        label = h3("\\(\\alpha\\)"),
+                        value = "0.05"
+                    )
                 ),
 
                 mainPanel(
@@ -520,8 +546,11 @@ server <- function(input, output) {
         parsed <- parse_input_power_cohens_d(input)
 
         if (is_valid(parsed)) {
-            power_plot_cohens_d(n = parsed$n$value,
-                                cohens_d = parsed$cohens_d$value)
+            power_plot_cohens_d(
+                n = parsed$n$value,
+                cohens_d = parsed$cohens_d$value,
+                alpha = parsed$alpha$value
+            )
 
         }
     })
@@ -533,13 +562,16 @@ server <- function(input, output) {
             if (parsed$df1$value == 1L) {
                 power_plot_cohens_d(
                     n = parsed$n$value,
-                    cohens_d =
-                        convert_petasq_cohens_d(p_eta_sq = parsed$p_eta_sq$value)
+                    cohens_d = convert_petasq_cohens_d(p_eta_sq = parsed$p_eta_sq$value),
+                    alpha = parsed$alpha$value
                 )
             } else {
-                power_plot_p_eta_sq(n = parsed$n$value,
-                                    p_eta_sq = parsed$p_eta_sq$value,
-                                    df1 = parsed$df1$value)
+                power_plot_p_eta_sq(
+                    n = parsed$n$value,
+                    p_eta_sq = parsed$p_eta_sq$value,
+                    df1 = parsed$df1$value,
+                    alpha = parsed$alpha$value
+                )
             }
 
         }
@@ -555,7 +587,8 @@ server <- function(input, output) {
                 var = parsed$var$value,
                 cov = parsed$cov$value,
                 effect = parsed$effect$value,
-                idata = parsed$design$idata
+                idata = parsed$design$idata,
+                alpha = parsed$alpha$value
             )
         }
     })
@@ -568,7 +601,8 @@ server <- function(input, output) {
                 mu = parsed$mu$value,
                 Sigma = parsed$Sigma$value,
                 effect = parsed$effect$value,
-                idata = parsed$design$idata
+                idata = parsed$design$idata,
+                alpha = parsed$alpha$value
             )
         }
     })
@@ -578,8 +612,11 @@ server <- function(input, output) {
         parsed <- parse_input_power_cohens_d(input)
 
         if (is_valid(parsed)) {
-            pwr <- power_cohens_d(n = parsed$n$value,
-                                  cohens_d = parsed$cohens_d$value)
+            pwr <- power_cohens_d(
+                n = parsed$n$value,
+                cohens_d = parsed$cohens_d$value,
+                alpha = parsed$alpha$value
+            )
             withMathJax(sprintf("\\(PWR = %f\\)", pwr))
         } else {
             do.call(withMathJax, collect_errors(parsed))
@@ -591,9 +628,12 @@ server <- function(input, output) {
         parsed <- parse_input_power_eta(input)
 
         if (is_valid(parsed)) {
-            pwr <- power_petasq(n = parsed$n$value,
-                                p_eta_sq = parsed$p_eta_sq$value,
-                                df1 = parsed$df1$value)
+            pwr <- power_petasq(
+                n = parsed$n$value,
+                p_eta_sq = parsed$p_eta_sq$value,
+                df1 = parsed$df1$value,
+                alpha = parsed$alpha$value
+            )
             withMathJax(sprintf("\\(PWR = %f\\)", pwr))
         } else {
             do.call(withMathJax, collect_errors(parsed))
@@ -609,7 +649,8 @@ server <- function(input, output) {
                 var = parsed$var$value,
                 cov = parsed$cov$value,
                 effect = parsed$effect$value,
-                idata = parsed$design$idata
+                idata = parsed$design$idata,
+                alpha = parsed$alpha$value
             )
             withMathJax(sprintf("\\(PWR = %f\\)", pwr))
         } else {
@@ -625,7 +666,8 @@ server <- function(input, output) {
                 mu = parsed$mu$value,
                 Sigma = parsed$Sigma$value,
                 effect = parsed$effect$value,
-                idata = parsed$design$idata
+                idata = parsed$design$idata,
+                alpha = parsed$alpha$value
             )
             withMathJax(sprintf("\\(PWR = %f\\)", pwr))
         } else {
