@@ -44,14 +44,14 @@ The command will open a browser tab. The GUI is very self-explaining. Simply clo
 
 ### 2.3 Plots
 
-* `power_plot_cohens_d(n, cohens_d)`
-* `power_plot_mu_cov_contrast(n, mu, Sigma, contrast)`
-* `power_plot_p_eta_sq(n, p_eta_sq, df1)`
+* `power_plot_cohens_d(n, cohens_d, alpha = 0.05)`
+* `power_plot_mu_cov_contrast(n, mu, Sigma, contrast, alpha = 0.05)`
+* `power_plot_p_eta_sq(n, p_eta_sq, df1, alpha = 0.05)`
 
 
 ### 2.4 Power Calculators
 
-* `power_cohens_d(n, cohens_d)`
+* `power_cohens_d(n, cohens_d, alpha = 0.05)`
 
 	E.g.:
 
@@ -64,7 +64,7 @@ The command will open a browser tab. The GUI is very self-explaining. Simply clo
 	power_cohens_d(n = 19, cohens_d = cohens_d)
 	```
 
-* `power_petasq(n, p_eta_sq, df1)`
+* `power_petasq(n, p_eta_sq, df1, alpha = 0.05)`
 
 	E.g.:
 
@@ -75,7 +75,7 @@ The command will open a browser tab. The GUI is very self-explaining. Simply clo
 	```
 
 
-* `power_mu_cov_contrast(n, mu, Sigma, contrast)`
+* `power_mu_cov_contrast(n, mu, Sigma, contrast, alpha = 0.05)`
 
 	E.g.:
 	
