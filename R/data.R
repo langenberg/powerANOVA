@@ -1,11 +1,11 @@
-#' @title Example data from Janczyk and Leuthold (2017).
+#' @title Example data from Janczyk and Leuthold (2018).
 #'
 #'@references{
-#'   \insertRef{Janczyk2017a}{powerANOVA}
+#'   \insertRef{Janczyk2018a}{powerANOVA}
 #' }
 #'
 #' @description
-#' The \code{simon} data set originates from a Simon experiment conducted by Janczyk and Leuthold (2017, second experiment). N = 36 subjects participated in the experiment. Three repeated measures factors were manipulated: (1) congruency in task n, (2) congruency in task n-1, and (3) effector switch. See the original study for more information.
+#' The \code{simon} data set originates from a Simon experiment conducted by Janczyk and Leuthold (2018, second experiment). N = 36 subjects participated in the experiment. Three repeated measures factors were manipulated: (1) congruency in task n, (2) congruency in task n-1, and (3) effector switch. See the original study for more information.
 #'
 #' @format
 #' \describe{
