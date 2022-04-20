@@ -92,6 +92,7 @@ parse_dbl <- function(input, n = NULL) {
 }
 
 #' @keywords internal
+#' @importFrom matrixcalc is.positive.definite
 parse_dbl_matrix <- function(input, dim = NULL, ...) {
     Sigma <- gsub(" ", "", input)
     Sigma <- gsub("[", "", Sigma, fixed = T)
@@ -106,7 +107,13 @@ parse_dbl_matrix <- function(input, dim = NULL, ...) {
                 dim <- 1
             }
             Sigma <- matrix(as.numeric(Sigma), ncol = dim, byrow = TRUE, ...)
-            Sigma <- list(value = Sigma, valid = TRUE)
+
+            if (!isSymmetric(Sigma) || !is.positive.definite(Sigma)) {
+                Sigma <- list(valid = FALSE, error = "Sigma is not positive definite.")
+            } else {
+                Sigma <- list(value = Sigma, valid = TRUE)
+            }
+
         } else {
             Sigma <- list(valid = FALSE, error = "Wrong number of doubles.")
         }

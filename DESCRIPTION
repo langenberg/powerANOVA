@@ -1,7 +1,7 @@
 Package: powerANOVA
 Type: Package
 Title: Power Analysis for Repeated Measures ANOVA
-Version: 0.1.1
+Version: 0.1.2
 Author: Benedikt Langenberg [aut, cre]
 Maintainer: Benedikt Langenberg <benedikt.langenberg@gmail.com>
 Depends:
@@ -10,7 +10,8 @@ Depends:
     tidyverse,
     effectsize
 Imports:
-    Rdpack
+    Rdpack,
+    matrixcalc
 Description: Power Analysis for Repeated Measures ANOVA.
 License: GPL (>= 2)
 Encoding: UTF-8

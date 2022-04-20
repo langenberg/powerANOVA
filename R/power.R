@@ -1,4 +1,5 @@
 #' @export
+#' @importFrom matrixcalc is.positive.definite
 get_sums_of_squares <- function(
     n = 10,
     mu = c(1, 1, 2, 2.1),
@@ -17,6 +18,10 @@ get_sums_of_squares <- function(
 
     if (is.vector(Sigma)) {
         Sigma <- matrix(Sigma, ncol = 1)
+    }
+
+    if (!isSymmetric(Sigma) || !is.positive.definite(Sigma)) {
+        stop("Sigma is not positive definite.")
     }
 
     if (is.vector(mu)) {
@@ -55,7 +60,11 @@ power_cohens_d <- function(n = 10, cohens_d, alpha = 0.05, ...) {
 }
 
 #' @export
+#' @importFrom matrixcalc is.positive.definite
 power_mu_cov_contrast <- function(n = 10, mu, Sigma, contrast, ...) {
+    if (!isSymmetric(Sigma) || !is.positive.definite(Sigma)) {
+        stop("Sigma is not positive definite.")
+    }
     mu <- contrast %*% mu
     Sigma <- contrast %*% Sigma %*% t(contrast)
     power_mu_cov(n = 10, mu = mu, Sigma = Sigma)
