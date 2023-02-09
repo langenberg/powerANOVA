@@ -1,8 +1,19 @@
 Package: powerANOVA
 Type: Package
 Title: Power Analysis for Repeated Measures ANOVA
-Version: 0.1.2
-Author: Benedikt Langenberg [aut, cre]
+Version: 0.1.3
+Authors@R: c(person(given = "Benedikt", family = "Langenberg",
+                    role  = c("aut", "cre"),
+                    email = "benedikt.langenberg@gmail.com"),
+             person(given = "Valentin", family = "Koob",
+                    role  = "ctb"),
+             person(given = "Markus", family = "Janczyk",
+                    role  = "ctb"),
+             person(given = "Reinhold", family = "Kliegl",
+                    role  = "ctb"),
+             person(given = "Axel", family = "Mayer",
+                    role  = "ctb")
+            )
 Maintainer: Benedikt Langenberg <benedikt.langenberg@gmail.com>
 Depends:
     R (>= 3.4.0),
