@@ -103,7 +103,7 @@ power_mu_cov_multi <- function(n, ...) {
 power_petasq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
     df2 <- df1 * (n-df1)
     # F_value <- p_eta_sq*df2/(df1 - p_eta_sq*df1)
-    ncp <- convert_petasq_f2(p_eta_sq)*df2
+    ncp <- convert_petasq_f2(p_eta_sq)*n
     1 - pf(qf(1-alpha, df1 = df1, df2 = df2), df1 = df1, df2 = df2, ncp = ncp)
 }
 

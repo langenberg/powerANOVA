@@ -276,203 +276,229 @@ ui <- fluidPage(
 
     withMathJax(),
 
-    tabsetPanel(
-        tabPanel(
-            "Cohen's \\(d\\)",
-            br(),
-            sidebarLayout(
-                sidebarPanel(
-                    textInput("txt_n_cohens_d",
-                              label = h3("N"),
-                              value = "20"),
-                    textInput(
-                        "txt_cohens_d",
-                        label = h3("Cohen's \\(d\\)"),
-                        value = "0.5"
-                    ),
-                    textInput(
-                        "txt_alpha_cohens_d",
-                        label = h3("\\(\\alpha\\)"),
-                        value = "0.05"
+    sidebarLayout(
+        sidebarPanel(
+            p(
+                code("powerANOVA"),
+                ' is an R package intended as a companion to the article: '
+            ),
+            p(
+                "Langenberg, B., Janczyk, M., Koob, V., Kliegl, R., & Mayer, A. (2022). A tutorial on using the paired t-test for power calculations in repeated measures ANOVA with interactions. ",
+                em(
+                    "Behavior Research Methods",
+                    .noWS = c("after-begin", "before-end", "outside", "after", "before")
+                ),
+                ". ",
+                tags$a(
+                    href="https://doi.org/10.3758/s13428-022-01902-8",
+                    "https://doi.org/10.3758/s13428-022-01902-8",
+                    .noWS = c("after-begin", "before-end", "outside", "after", "before")
+                ),
+                ".",
+                .noWS = c("after-begin", "before-end", "outside", "after", "before")
+            ),
+            p("Package Version: ", as.character(packageVersion("powerANOVA")))
+        ),
+        mainPanel(
+            tabsetPanel(
+                tabPanel(
+                    "Cohen's \\(d\\)",
+                    br(),
+                    sidebarLayout(
+                        sidebarPanel(
+                            textInput("txt_n_cohens_d",
+                                      label = h3("N"),
+                                      value = "20"),
+                            textInput(
+                                "txt_cohens_d",
+                                label = h3("Cohen's \\(d\\)"),
+                                value = "0.5"
+                            ),
+                            textInput(
+                                "txt_alpha_cohens_d",
+                                label = h3("\\(\\alpha\\)"),
+                                value = "0.05"
+                            )
+                        ),
+
+                        # Show a plot of the generated distribution
+                        mainPanel(
+                            plotOutput("power_plot_cohens_d"),
+                            br(),
+                            uiOutput("power_cohens_d")
+                        )
+                    )
+                ),
+                tabPanel(
+                    "\\(\\eta^2_p\\)",
+                    br(),
+                    sidebarLayout(
+                        sidebarPanel(
+                            textInput("txt_n_eta",
+                                      label = h3("N"),
+                                      value = "20"),
+                            textInput(
+                                "txt_p_eta_sq",
+                                label = h3("\\(\\eta^2_p\\)"),
+                                value = as.character(0.5^2/(1+0.5^2)) # d^2*N/(df2+d^2*N)
+                            ),
+                            textInput(
+                                "txt_df1_eta",
+                                label = h3("\\(df_1\\)"),
+                                value = "1"
+                            ),
+                            textInput(
+                                "txt_alpha_eta",
+                                label = h3("\\(\\alpha\\)"),
+                                value = "0.05"
+                            )
+                        ),
+
+                        # Show a plot of the generated distribution
+                        mainPanel(
+                            plotOutput("power_plot_eta"),
+                            br(),
+                            uiOutput("power_eta")
+                        )
+                    )
+                ),
+                tabPanel(
+                    "means and equal (co)variances (\\(\\mu + \\sigma^2_i + \\sigma_{ij}\\))",
+                    br(),
+                    sidebarLayout(
+                        sidebarPanel(
+                            textInput("txt_design_eq",
+                                      label = h3("Design"),
+                                      value = "2x2"),
+                            uiOutput("txt_out_effect_eq"),
+                            textInput("txt_effect_eq",
+                                      label = h3("Effect"),
+                                      value = "A"),
+                            textInput("txt_n_eq",
+                                      label = h3("N"),
+                                      value = "20"),
+                            uiOutput("txt_out_order_eq"),
+                            textInput(
+                                "txt_mu_eq",
+                                label = h3("\\(\\mu\\)"),
+                                value = "0,0.35,0,0.35"
+                            ),
+                            textInput(
+                                "txt_var_eq",
+                                label = h3("\\(\\sigma^2_i\\)"),
+                                value = "1"
+                            ),
+                            textInput(
+                                "txt_cov_eq",
+                                label = h3("\\(\\sigma_{ij}\\)"),
+                                value = "0.5"
+                            ),
+                            uiOutput("txt_out_sigma_eq"),
+                            textInput(
+                                "txt_alpha_eq",
+                                label = h3("\\(\\alpha\\)"),
+                                value = "0.05"
+                            )
+                        ),
+
+                        # Show a plot of the generated distribution
+                        mainPanel(
+                            plotOutput("power_plot_eq"),
+                            br(),
+                            uiOutput("power_eq")
+                        )
                     )
                 ),
 
-                # Show a plot of the generated distribution
-                mainPanel(
-                    plotOutput("power_plot_cohens_d"),
+                tabPanel(
+                    "means and UNequal (co)variances (\\(\\mu + \\Sigma\\))",
                     br(),
-                    uiOutput("power_cohens_d")
-                )
-            )
-        ),
-        tabPanel(
-            "\\(\\eta^2_p\\)",
-            br(),
-            sidebarLayout(
-                sidebarPanel(
-                    textInput("txt_n_eta",
-                              label = h3("N"),
-                              value = "20"),
-                    textInput(
-                        "txt_p_eta_sq",
-                        label = h3("\\(\\eta^2_p\\)"),
-                        value = as.character(0.5^2/(1+0.5^2)) # d^2*N/(df2+d^2*N)
-                    ),
-                    textInput(
-                        "txt_df1_eta",
-                        label = h3("\\(df_1\\)"),
-                        value = "1"
-                    ),
-                    textInput(
-                        "txt_alpha_eta",
-                        label = h3("\\(\\alpha\\)"),
-                        value = "0.05"
+                    sidebarLayout(
+                        sidebarPanel(
+                            textInput("txt_design_uneq",
+                                      label = h3("Design"),
+                                      value = "2x2"),
+                            uiOutput("txt_out_effect_uneq"),
+                            textInput("txt_effect_uneq",
+                                      label = h3("Effect"),
+                                      value = "A"),
+                            textInput("txt_n_uneq",
+                                      label = h3("N"),
+                                      value = "20"),
+                            uiOutput("txt_out_order_uneq"),
+                            textInput(
+                                "txt_mu_uneq",
+                                label = h3("\\(\\mu\\)"),
+                                value = "0,0.35,0,0.35"
+                            ),
+                            uiOutput("txt_out_order_sigma_uneq"),
+                            textInput(
+                                "txt_sigma_uneq",
+                                label = h3("\\(\\Sigma\\)"),
+                                value = "[[1,0.5,0.5,0.5],[0.5,1,0.5,0.5],[0.5,0.5,1,0.5],[0.5,0.5,0.5,1]]"
+                            ),
+                            uiOutput("txt_out_sigma_uneq"),
+                            textInput(
+                                "txt_alpha_uneq",
+                                label = h3("\\(\\alpha\\)"),
+                                value = "0.05"
+                            )
+                        ),
+
+                        mainPanel(
+                            plotOutput("power_plot_uneq"),
+                            br(),
+                            uiOutput("power_uneq"),
+                        )
                     )
                 ),
 
-                # Show a plot of the generated distribution
-                mainPanel(
-                    plotOutput("power_plot_eta"),
+                tabPanel(
+                    "effect size converter",
                     br(),
-                    uiOutput("power_eta")
-                )
-            )
-        ),
-        tabPanel(
-            "means and equal (co)variances (\\(\\mu + \\sigma^2_i + \\sigma_{ij}\\))",
-            br(),
-            sidebarLayout(
-                sidebarPanel(
-                    textInput("txt_design_eq",
-                              label = h3("Design"),
-                              value = "2x2"),
-                    uiOutput("txt_out_effect_eq"),
-                    textInput("txt_effect_eq",
-                              label = h3("Effect"),
-                              value = "A"),
-                    textInput("txt_n_eq",
-                              label = h3("N"),
-                              value = "20"),
-                    uiOutput("txt_out_order_eq"),
-                    textInput(
-                        "txt_mu_eq",
-                        label = h3("\\(\\mu\\)"),
-                        value = "0,0.35,0,0.35"
-                    ),
-                    textInput(
-                        "txt_var_eq",
-                        label = h3("\\(\\sigma^2_i\\)"),
-                        value = "1"
-                    ),
-                    textInput(
-                        "txt_cov_eq",
-                        label = h3("\\(\\sigma_{ij}\\)"),
-                        value = "0.5"
-                    ),
-                    uiOutput("txt_out_sigma_eq"),
-                    textInput(
-                        "txt_alpha_eq",
-                        label = h3("\\(\\alpha\\)"),
-                        value = "0.05"
-                    )
-                ),
-
-                # Show a plot of the generated distribution
-                mainPanel(
-                    plotOutput("power_plot_eq"),
-                    br(),
-                    uiOutput("power_eq")
-                )
-            )
-        ),
-
-        tabPanel(
-            "means and UNequal (co)variances (\\(\\mu + \\Sigma\\))",
-            br(),
-            sidebarLayout(
-                sidebarPanel(
-                    textInput("txt_design_uneq",
-                              label = h3("Design"),
-                              value = "2x2"),
-                    uiOutput("txt_out_effect_uneq"),
-                    textInput("txt_effect_uneq",
-                              label = h3("Effect"),
-                              value = "A"),
-                    textInput("txt_n_uneq",
-                              label = h3("N"),
-                              value = "20"),
-                    uiOutput("txt_out_order_uneq"),
-                    textInput(
-                        "txt_mu_uneq",
-                        label = h3("\\(\\mu\\)"),
-                        value = "0,0.35,0,0.35"
-                    ),
-                    uiOutput("txt_out_order_sigma_uneq"),
-                    textInput(
-                        "txt_sigma_uneq",
-                        label = h3("\\(\\Sigma\\)"),
-                        value = "[[1,0.5,0.5,0.5],[0.5,1,0.5,0.5],[0.5,0.5,1,0.5],[0.5,0.5,0.5,1]]"
-                    ),
-                    uiOutput("txt_out_sigma_uneq"),
-                    textInput(
-                        "txt_alpha_uneq",
-                        label = h3("\\(\\alpha\\)"),
-                        value = "0.05"
-                    )
-                ),
-
-                mainPanel(
-                    plotOutput("power_plot_uneq"),
-                    br(),
-                    uiOutput("power_uneq"),
-                )
-            )
-        ),
-
-        tabPanel(
-            "effect size converter",
-            br(),
-            fluidRow(
-                column(
-                    4,
-                    sidebarPanel(width = 12,
-                        textInput(
-                            "txt_convert_cohens_d",
-                            label = h3("Cohen's \\(d\\)"),
-                            value = "0.5"
+                    fluidRow(
+                        column(
+                            4,
+                            sidebarPanel(width = 12,
+                                textInput(
+                                    "txt_convert_cohens_d",
+                                    label = h3("Cohen's \\(d\\)"),
+                                    value = "0.5"
+                                ),
+                                textInput(
+                                    "txt_convert_cohens_d_n",
+                                    label = h3("\\(N\\)"),
+                                    value = "20"
+                                ),
+                                checkboxInput("chbox_convert_cohens_d_pop",
+                                    label = "Population",
+                                    value = TRUE),
+                                hr(),
+                                h3("\\(\\eta^2_p\\)"),
+                                uiOutput("txt_out_cohens_d_to_eta")
+                            ),
                         ),
-                        textInput(
-                            "txt_convert_cohens_d_n",
-                            label = h3("\\(N\\)"),
-                            value = "20"
-                        ),
-                        checkboxInput("chbox_convert_cohens_d_pop",
-                            label = "Population",
-                            value = TRUE),
-                        hr(),
-                        h3("\\(\\eta^2_p\\)"),
-                        uiOutput("txt_out_cohens_d_to_eta")
-                    ),
-                ),
-                column(
-                    4,
-                    sidebarPanel(width = 12,
-                        textInput(
-                            "txt_convert_eta",
-                            label = h3("\\(\\eta^2_p\\)"),
-                            value = as.character(0.5^2/(1 + 0.5^2)) # d^2*N/(df2+d^2*N)
-                        ),
-                        textInput(
-                            "txt_convert_eta_n",
-                            label = h3("\\(N\\)"),
-                            value = "20"
-                        ),
-                        checkboxInput("chbox_convert_eta_pop",
-                                      label = "Population",
-                                      value = TRUE),
-                        hr(),
-                        h3("Cohen's \\(d\\)"),
-                        uiOutput("txt_out_eta_cohens_d")
+                        column(
+                            4,
+                            sidebarPanel(width = 12,
+                                textInput(
+                                    "txt_convert_eta",
+                                    label = h3("\\(\\eta^2_p\\)"),
+                                    value = as.character(0.5^2/(1 + 0.5^2)) # d^2*N/(df2+d^2*N)
+                                ),
+                                textInput(
+                                    "txt_convert_eta_n",
+                                    label = h3("\\(N\\)"),
+                                    value = "20"
+                                ),
+                                checkboxInput("chbox_convert_eta_pop",
+                                              label = "Population",
+                                              value = TRUE),
+                                hr(),
+                                h3("Cohen's \\(d\\)"),
+                                uiOutput("txt_out_eta_cohens_d")
+                            )
+                        )
                     )
                 )
             )
