@@ -613,6 +613,8 @@ server <- function(input, output) {
     output$power_plot_eq <- renderPlot({
         parsed <- parse_input_power_eq(input)
 
+        print(parsed)
+
         if (is_valid(parsed)) {
             power_plot_mu_cov(
                 n = parsed$n$value,

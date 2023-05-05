@@ -191,7 +191,7 @@ power_plot_cohens_d <- function(n = 10, cohens_d, alpha = 0.05) {
 }
 
 #' @export
-power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05) {
+power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
     df2 <- df1 * (n - df1)
     ncp <- convert_petasq_f2(p_eta_sq)*df2
 
