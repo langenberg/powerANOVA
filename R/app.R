@@ -78,7 +78,7 @@ parse_dbl <- function(input, n = NULL) {
     dbl <- gsub("[", "", dbl, fixed = T)
     dbl <- gsub("]", "", dbl, fixed = T)
 
-    if (!grepl("^[\\d]+(\\.[\\d]+){0,1}(,[\\d]+(\\.[\\d]+){0,1})*$", dbl, perl = T)) {
+    if (!grepl("^[-]*[\\d]+(\\.[\\d]+){0,1}(,[-]*[\\d]+(\\.[\\d]+){0,1})*$", dbl, perl = T)) {
         dbl <- list(valid = FALSE, error = "Not a double.")
     } else {
         dbl <- strsplit(dbl, ",")[[1]]
@@ -98,7 +98,7 @@ parse_dbl_matrix <- function(input, dim = NULL, ...) {
     Sigma <- gsub("[", "", Sigma, fixed = T)
     Sigma <- gsub("]", "", Sigma, fixed = T)
 
-    if (!grepl("^[\\d]+(\\.[\\d]+){0,1}(,[\\d]+(\\.[\\d]+){0,1})*$", Sigma, perl = T)) {
+    if (!grepl("^[-]*[\\d]+(\\.[\\d]+){0,1}(,[-]*[\\d]+(\\.[\\d]+){0,1})*$", Sigma, perl = T)) {
         Sigma <- list(valid = FALSE, error = "Not a double.")
     } else {
         Sigma <- strsplit(Sigma, ",")[[1]]
@@ -248,7 +248,15 @@ parse_input_power_eq <- function(input) {
 
     alpha <- parse_dbl(input$txt_alpha_eq)
 
-    list(design = design, effect = effect, mu = mu, n = n, var = var, cov = cov, alpha = alpha)
+    list(
+        design = design,
+        effect = effect,
+        mu = mu,
+        n = n,
+        var = var,
+        cov = cov,
+        alpha = alpha
+    )
 }
 
 #' @keywords internal
@@ -266,7 +274,14 @@ parse_input_power_uneq <- function(input) {
 
     alpha <- parse_dbl(input$txt_alpha_uneq)
 
-    list(design = design, effect = effect, mu = mu, n = n, Sigma = Sigma, alpha = alpha)
+    list(
+        design = design,
+        effect = effect,
+        mu = mu,
+        n = n,
+        Sigma = Sigma,
+        alpha = alpha
+    )
 }
 
 # Define UI for application that draws a histogram
@@ -613,8 +628,6 @@ server <- function(input, output) {
     output$power_plot_eq <- renderPlot({
         parsed <- parse_input_power_eq(input)
 
-        print(parsed)
-
         if (is_valid(parsed)) {
             power_plot_mu_cov(
                 n = parsed$n$value,
@@ -677,6 +690,7 @@ server <- function(input, output) {
 
     output$power_eq <- renderUI({
         parsed <- parse_input_power_eq(input)
+
         if (is_valid(parsed)) {
             pwr <- power_mu_cov(
                 n = parsed$n$value,
