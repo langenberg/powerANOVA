@@ -157,7 +157,7 @@ convert_petasq_cohens_d <- function(p_eta_sq, n, population = TRUE) {
 }
 
 #' @export
-power_plot_cohens_d <- function(n = 10, cohens_d, alpha = 0.05) {
+power_plot_cohens_d <- function(n = 10, cohens_d, alpha = 0.05, res = 1000, ...) {
     t <- cohens_d * sqrt(n)
 
     lower_null <- qt(alpha/2, df = n - 1) - 1
@@ -173,27 +173,31 @@ power_plot_cohens_d <- function(n = 10, cohens_d, alpha = 0.05) {
             mapping = aes(color = factor(
                 "null hypothesis",
                 levels = c("null hypothesis", "population")
-            ))
+            )),
+            n = res
         ) +
         geom_function(
             fun = function(x) dt(x, n - 1, ncp = t),
             mapping = aes(color = factor(
                 "population", levels = c("null hypothesis", "population")
-            ))
+            )),
+            n = res
         ) +
         stat_function(
             fun = function(x) dt(x, n - 1, ncp = t),
             geom = "area",
             alpha = 0.2,
             fill = "steelblue",
-            xlim = c(qt(1-alpha/2, df = n - 1), mylimits[2])
+            xlim = c(qt(1-alpha/2, df = n - 1), mylimits[2]),
+            n = round(res * (mylimits[2] - qt(1-alpha/2, df = n - 1)) / (mylimits[2]-mylimits[1]))
         ) +
         stat_function(
             fun = function(x) dt(x, n - 1, ncp = t),
             geom = "area",
             alpha = 0.2,
             fill = "steelblue",
-            xlim = c(mylimits[1], qt(alpha/2, df = n - 1))
+            xlim = c(mylimits[1], qt(alpha/2, df = n - 1)),
+            n = round(res * (qt(alpha/2, df = n - 1) - mylimits[1]) / (mylimits[2]-mylimits[1]))
         ) +
         geom_vline(xintercept = qt(1-alpha/2, df = n - 1)) +
         geom_vline(xintercept = qt(alpha/2, df = n - 1)) +
@@ -207,7 +211,7 @@ power_plot_cohens_d <- function(n = 10, cohens_d, alpha = 0.05) {
 }
 
 #' @export
-power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
+power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, res = 1000, ...) {
     df2 <- df1 * n - df1
     ncp <- convert_petasq_f2(p_eta_sq)*df1*n
 
@@ -220,7 +224,8 @@ power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
             mapping = aes(color = factor(
                 "null hypothesis",
                 levels = c("null hypothesis", "population")
-            ))
+            )),
+            n = res
         ) +
         geom_function(
             fun = function(x)
@@ -232,7 +237,8 @@ power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
                 ),
             mapping = aes(color = factor(
                 "population", levels = c("null hypothesis", "population")
-            ))
+            )),
+            n = res
         ) +
         stat_function(
             fun = function(x)
@@ -245,7 +251,8 @@ power_plot_p_eta_sq <- function(n, p_eta_sq, df1 = 1, alpha = 0.05, ...) {
             geom = "area",
             alpha = 0.2,
             fill = "steelblue",
-            xlim = c(qf(1-alpha, df1 = df1, df2 = df2), mylimits[2])
+            xlim = c(qf(1-alpha, df1 = df1, df2 = df2), mylimits[2]),
+            n = round(res * (mylimits[2] - qf(1-alpha, df1 = df1, df2 = df2)) / (mylimits[2]-mylimits[1]))
         ) +
         geom_vline(xintercept = qf(1-alpha, df1 = df1, df2 = df2)) +
         # xlim(c(0, qf(1-alpha, df1 = df1, df2 = df2) + 1)) +
