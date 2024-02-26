@@ -67,7 +67,7 @@ power_mu_cov_contrast <- function(n = 10, mu, Sigma, contrast, ...) {
     }
     mu <- contrast %*% mu
     Sigma <- contrast %*% Sigma %*% t(contrast)
-    power_mu_cov(n = 10, mu = mu, Sigma = Sigma)
+    power_mu_cov(n = n, mu = mu, Sigma = Sigma)
 }
 
 #' @export
